@@ -29,7 +29,7 @@ public class Student {
     private String password;
     private String course;
     private int completedCredits;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_id")
     private Major major;
 
