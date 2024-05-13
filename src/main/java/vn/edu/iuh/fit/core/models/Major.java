@@ -1,5 +1,7 @@
 package vn.edu.iuh.fit.core.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Table(name = "major")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Major {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +24,7 @@ public class Major {
     private String name;
     private String department;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "major", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Student> students;
 
