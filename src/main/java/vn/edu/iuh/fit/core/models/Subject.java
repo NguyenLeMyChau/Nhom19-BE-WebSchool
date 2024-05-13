@@ -43,6 +43,9 @@ public class Subject {
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Class> classes;
 
+    @OneToMany(mappedBy = "subject")
+    private List<Grade> grades;
+
 
     public Subject() {
         // Tạo ID duy nhất khi khởi tạo đối tượng Subject mới

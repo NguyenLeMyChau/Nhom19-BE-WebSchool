@@ -54,12 +54,12 @@ public class Nhom19BeWebSchoolApplication {
             subjectRepository.save(subject);
 
             // Tạo một danh sách sinh viên
-            List<Student> students = new ArrayList<>();
+//            List<Student> students = new ArrayList<>();
 
             // T���o một sinh viên và thêm vào danh sách sinh viên
             Student student1 = new Student();
             student1.setName("John Doe"); // Đặt tên của sinh viên
-            students.add(student1);
+//            students.add(student1);
             studentRepository.save(student1);
 
 
@@ -68,19 +68,29 @@ public class Nhom19BeWebSchoolApplication {
             LocalDate endDate = LocalDate.of(2024, 12, 31);
 
 
+            // Tạo một lớp học mới
             Class myClass = new Class(
-                    "Tên lớp học", // Tên lớp học
-                    subject, // Môn học
-                    30, // Số lượng tối đa học viên
-                    null, // Danh sách học viên, bạn có thể thêm sau
-                    "Tên giáo viên", // Tên giáo viên
-                    "Thứ hai", // Ngày học
-                    "Buổi sáng", // Buổi học
-                    LocalDate.of(2024, 5, 10), // Ngày bắt đầu
-                    LocalDate.of(2024, 8, 10) // Ngày kết thúc
+                    "DHKTPM16B",
+                    subject,
+                    30,
+                    new ArrayList<>(), // Khởi tạo một danh sách trống cho sinh viên
+                    "Nguyễn Phan Anh",
+                    "Thứ ba",
+                    "Tiết 4-6",
+                    LocalDate.of(2024, 5, 10),
+                    LocalDate.of(2024, 8, 10)
             );
 
+// Thêm sinh viên vào danh sách sinh viên của lớp học
+            myClass.getStudents().add(student1);
+
+// Thêm lớp học vào danh sách các lớp học của sinh viên
+            student1.getClasses().add(myClass);
+
+// Lưu lớp học và sinh viên vào cơ sở dữ liệu
             classRepository.save(myClass);
+            studentRepository.save(student1);
+
 
         };
     }

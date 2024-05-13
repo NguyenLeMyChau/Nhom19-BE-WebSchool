@@ -8,6 +8,7 @@ import lombok.ToString;
 import vn.edu.iuh.fit.core.pks.ClassIdGenerator;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,11 +28,13 @@ public class Class {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id")
     private Subject subject;
+
     private int maxEnrollment;
 
-    @OneToMany(mappedBy = "classInfo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Column(name = "listStudent")
-    private List<Student> students;
+//    @OneToMany(mappedBy = "classInfo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Student> students;
+    @ManyToMany(mappedBy = "classes")
+    private List<Student> students = new ArrayList<>();
 
     private String teacher;
 //    @ElementCollection
@@ -53,6 +56,20 @@ public class Class {
     }
 
 
+    public Class(String name, Subject subject, int maxEnrollment, String teacher, String dayOfWeek, String lesson, LocalDate startDate, LocalDate endDate ) {
+        this(subject);
+        this.name = name;
+        this.subject = subject;
+        this.maxEnrollment = maxEnrollment;
+//        this.students = students;
+        this.teacher = teacher;
+        this.dayOfWeek = dayOfWeek;
+        this.lesson = lesson;
+        this.startDate = startDate;
+        this.endDate = endDate;
+
+    }
+
     public Class(String name, Subject subject, int maxEnrollment, List<Student> students, String teacher, String dayOfWeek, String lesson, LocalDate startDate, LocalDate endDate) {
         this(subject);
         this.name = name;
@@ -64,7 +81,6 @@ public class Class {
         this.lesson = lesson;
         this.startDate = startDate;
         this.endDate = endDate;
-
     }
 
     private String generateClassId() {
