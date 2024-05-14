@@ -1,5 +1,9 @@
 package vn.edu.iuh.fit.core.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,6 +49,7 @@ public class Class {
     private String lesson;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String classroom;
 
     public Class(Subject subject) {
         this.subject = subject;
@@ -56,18 +61,18 @@ public class Class {
     }
 
 
-    public Class(String name, Subject subject, int maxEnrollment, String teacher, String dayOfWeek, String lesson, LocalDate startDate, LocalDate endDate ) {
+    public Class(String name, Subject subject, int maxEnrollment, List<Student> students, String teacher, String dayOfWeek, String lesson, LocalDate startDate, LocalDate endDate, String classroom) {
         this(subject);
         this.name = name;
         this.subject = subject;
         this.maxEnrollment = maxEnrollment;
-//        this.students = students;
+        this.students = students;
         this.teacher = teacher;
         this.dayOfWeek = dayOfWeek;
         this.lesson = lesson;
         this.startDate = startDate;
         this.endDate = endDate;
-
+        this.classroom = classroom;
     }
 
     public Class(String name, Subject subject, int maxEnrollment, List<Student> students, String teacher, String dayOfWeek, String lesson, LocalDate startDate, LocalDate endDate) {

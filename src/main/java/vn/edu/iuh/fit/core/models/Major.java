@@ -28,6 +28,7 @@ public class Major {
     @OneToMany(mappedBy = "major", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Student> students;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "major", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Subject> subjects;
 

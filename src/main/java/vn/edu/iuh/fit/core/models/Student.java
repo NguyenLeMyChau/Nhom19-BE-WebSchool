@@ -1,5 +1,6 @@
 package vn.edu.iuh.fit.core.models;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +36,9 @@ public class Student {
     @JoinColumn(name = "major_id")
     private Major major;
 
+    private String mainClass;
+
+
     @ManyToMany
     @JoinTable(
             name = "student_class",
@@ -45,6 +49,7 @@ public class Student {
 //    @JoinColumn(name = "class_id")
 //    private Class classInfo;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "student")
     private List<Grade> grades;
     // Constructor
@@ -53,7 +58,8 @@ public class Student {
         this.id = StudentIdGenerator.generateUniqueId();
     }
 
-    public Student(String name, boolean gender, LocalDate dateOfBirth, String address, String password, String course, int completedCredits, Major major) {
+
+    public Student(String name, boolean gender, LocalDate dateOfBirth, String address, String password, String course, int completedCredits, Major major, String mainClass, List<Class> classes, List<Grade> grades) {
         this();
         this.name = name;
         this.gender = gender;
@@ -63,18 +69,8 @@ public class Student {
         this.course = course;
         this.completedCredits = completedCredits;
         this.major = major;
-//        this.classInfo = classInfo;
-    }
-
-    public Student(String name, boolean gender, LocalDate dateOfBirth, String address, String password, String course, int completedCredits, Major major, List<Class> classes) {
-        this.name = name;
-        this.gender = gender;
-        this.dateOfBirth = dateOfBirth;
-        this.address = address;
-        this.password = password;
-        this.course = course;
-        this.completedCredits = completedCredits;
-        this.major = major;
+        this.mainClass = mainClass;
         this.classes = classes;
+        this.grades = grades;
     }
 }

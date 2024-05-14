@@ -1,9 +1,15 @@
 package vn.edu.iuh.fit.core.models;
 
 import jakarta.persistence.*;
+import lombok.*;
 import vn.edu.iuh.fit.core.pks.GradePK;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 @IdClass(GradePK.class)
 @Table(name = "grade")
 public class Grade {

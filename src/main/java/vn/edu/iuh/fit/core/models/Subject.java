@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
-//@ToString
+@ToString
 @Table(name = "subject")
 public class Subject {
     @Id
