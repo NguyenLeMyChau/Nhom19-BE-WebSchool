@@ -21,18 +21,32 @@ public class Grade {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id")
     private Subject subject;
+
+    @Column(nullable = true)
     private float tk1;
+    @Column(nullable = true)
     private float tk2;
+    @Column(nullable = true)
     private float tk3;
+    @Column(nullable = true)
     private float tk4;
+    @Column(nullable = true)
     private float tk5;
+    @Column(nullable = true)
     private float tk6;
+    @Column(nullable = true)
     private float th1;
+    @Column(nullable = true)
     private float th2;
+    @Column(nullable = true)
     private float th3;
+    @Column(nullable = true)
     private float th4;
+    @Column(nullable = true)
     private float th5;
+    @Column(nullable = true)
     private float gk;
+    @Column(nullable = true)
     private float ck;
 
 
