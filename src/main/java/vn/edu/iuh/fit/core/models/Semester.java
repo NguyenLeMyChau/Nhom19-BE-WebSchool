@@ -18,8 +18,6 @@ public class Semester {
     @Column(name = "semester_id")
     private int id;
     private String name;
-    @OneToMany(mappedBy = "semester",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<Subject> subjects;
     @Column(length = 100)
     private String course;
 }

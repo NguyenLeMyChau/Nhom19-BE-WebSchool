@@ -37,8 +37,8 @@ public class Class {
 
 //    @OneToMany(mappedBy = "classInfo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private List<Student> students;
-    @ManyToMany(mappedBy = "classes")
-    private List<Student> students = new ArrayList<>();
+    @OneToMany(mappedBy = "classInfo")
+    private List<StudentClass> studentClasses = new ArrayList<>();
 
     private String teacher;
 //    @ElementCollection
@@ -51,6 +51,11 @@ public class Class {
     private LocalDate endDate;
     private String classroom;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "semester_id")
+    private Semester semester;
+
+
     public Class(Subject subject) {
         this.subject = subject;
         this.id = generateClassId();
@@ -61,12 +66,12 @@ public class Class {
     }
 
 
-    public Class(String name, Subject subject, int maxEnrollment, List<Student> students, String teacher, String dayOfWeek, String lesson, LocalDate startDate, LocalDate endDate, String classroom) {
+    public Class(String name, Subject subject, int maxEnrollment, List<StudentClass> students, String teacher, String dayOfWeek, String lesson, LocalDate startDate, LocalDate endDate, String classroom) {
         this(subject);
         this.name = name;
         this.subject = subject;
         this.maxEnrollment = maxEnrollment;
-        this.students = students;
+        this.studentClasses = students;
         this.teacher = teacher;
         this.dayOfWeek = dayOfWeek;
         this.lesson = lesson;
@@ -75,12 +80,12 @@ public class Class {
         this.classroom = classroom;
     }
 
-    public Class(String name, Subject subject, int maxEnrollment, List<Student> students, String teacher, String dayOfWeek, String lesson, LocalDate startDate, LocalDate endDate) {
+    public Class(String name, Subject subject, int maxEnrollment, List<StudentClass> students, String teacher, String dayOfWeek, String lesson, LocalDate startDate, LocalDate endDate) {
         this(subject);
         this.name = name;
         this.subject = subject;
         this.maxEnrollment = maxEnrollment;
-        this.students = students;
+        this.studentClasses = students;
         this.teacher = teacher;
         this.dayOfWeek = dayOfWeek;
         this.lesson = lesson;

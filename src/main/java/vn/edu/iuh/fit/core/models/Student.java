@@ -38,13 +38,16 @@ public class Student {
 
     private String mainClass;
 
+    @OneToMany(mappedBy = "student")
+    private List<StudentClass> studentClasses = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "student_class",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "class_id"))
-    private List<Class> classes = new ArrayList<>();
+//
+//    @ManyToMany
+//    @JoinTable(
+//            name = "student_class",
+//            joinColumns = @JoinColumn(name = "student_id"),
+//            inverseJoinColumns = @JoinColumn(name = "class_id"))
+//    private List<Class> classes = new ArrayList<>();
 //    @ManyToOne(fetch = FetchType.EAGER)
 //    @JoinColumn(name = "class_id")
 //    private Class classInfo;
@@ -59,7 +62,7 @@ public class Student {
     }
 
 
-    public Student(String name, boolean gender, LocalDate dateOfBirth, String address, String password, String course, int completedCredits, Major major, String mainClass, List<Class> classes, List<Grade> grades) {
+    public Student(String name, boolean gender, LocalDate dateOfBirth, String address, String password, String course, int completedCredits, Major major, String mainClass, List<StudentClass> classes, List<Grade> grades) {
         this();
         this.name = name;
         this.gender = gender;
@@ -70,7 +73,7 @@ public class Student {
         this.completedCredits = completedCredits;
         this.major = major;
         this.mainClass = mainClass;
-        this.classes = classes;
+        this.studentClasses = classes;
         this.grades = grades;
     }
 }
