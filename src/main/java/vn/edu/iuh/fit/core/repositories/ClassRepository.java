@@ -25,12 +25,39 @@ public interface ClassRepository extends JpaRepository<Class, String> {
     @Query(value = "SELECT COUNT(*) FROM student_class WHERE class_id = :classId", nativeQuery = true)
     int countStudentsInClass(@Param("classId") String classId);
 
-    @Query(value = "SELECT c.class_id, s.name, s.credits, s.tuition * s.credits AS total, sl.regis_date, " +
-            "CASE WHEN CURRENT_DATE BETWEEN c.start_date AND c.end_date THEN 1 ELSE 0 END AS status " +
-            "FROM student_class sl " +
-            "JOIN class c ON c.class_id = sl.class_id " +
-            "JOIN subject s ON c.subject_id = s.subject_id " +
-            "WHERE sl.student_id = :studentId", nativeQuery = true)
+    @Query(value = "SELECT \n" +
+            "    c.class_id, \n" +
+            "    s.name, \n" +
+            "    s.credits, \n" +
+            "    s.tuition * s.credits AS total, \n" +
+            "    sl.regis_date,\n" +
+            "    CASE \n" +
+            "        WHEN CURRENT_DATE BETWEEN c.start_date AND c.end_date THEN 1 \n" +
+            "        ELSE 0 \n" +
+            "    END AS status \n" +
+            "FROM \n" +
+            "    student_class sl \n" +
+            "JOIN \n" +
+            "    class c ON c.class_id = sl.class_id\n" +
+            "JOIN \n" +
+            "    subject s ON c.subject_id = s.subject_id \n" +
+            "WHERE \n" +
+            "    sl.student_id = :studentId \n" +
+            "    AND c.semester_id = (\n" +
+            "        SELECT \n" +
+            "            semester_id\n" +
+            "        FROM \n" +
+            "            semester\n" +
+            "        WHERE \n" +
+            "            (\n" +
+            "                (MONTH(CURRENT_DATE()) >= 5 AND SUBSTRING(course, 1, 4) = YEAR(CURRENT_DATE()))\n" +
+            "                OR (MONTH(CURRENT_DATE()) < 5 AND SUBSTRING(course, 6, 9) = YEAR(CURRENT_DATE()))\n" +
+            "            )\n" +
+            "            AND (\n" +
+            "                (MONTH(CURRENT_DATE()) >= 5 AND NAME = 'HK1')\n" +
+            "                OR (MONTH(CURRENT_DATE()) < 5 AND NAME = 'HK2')\n" +
+            "            )\n" +
+            "    );", nativeQuery = true)
     List<Object[]> findStudentClasses(@Param("studentId") String studentId);
 
     @Transactional
