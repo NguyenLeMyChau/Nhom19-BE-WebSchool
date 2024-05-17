@@ -18,12 +18,6 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     @Query("SELECT sc.classInfo FROM StudentClass sc WHERE sc.student.id = :studentId")
     List<Class> findClassesByStudentId(@Param("studentId") String studentId);
 
-//    @Modifying
-//    @Transactional
-//    @Query("UPDATE Student s SET s.completedCredits = :completedCredits WHERE s.id = :studentId")
-//    void updateCompletedCredits(String studentId, int completedCredits);
-
-
     @Query("SELECT DISTINCT c.semester FROM StudentClass sc JOIN sc.classInfo c WHERE sc.student.id = :studentId ORDER BY c.semester.id ASC")
     List<Semester> findSemestersByStudentIdOrderBySemesterIdAsc(String studentId);
 
@@ -31,10 +25,4 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     @Modifying
     @Query("UPDATE Student s SET s.completedCredits = :completedCredits WHERE s.id = :studentId")
     void updateCompletedCredits(@Param("studentId") String studentId, @Param("completedCredits") int completedCredits);
-
-
-//    @Transactional
-//    @Modifying
-//    @Query("UPDATE Student s SET s.completedCredits = :newCompletedCredits WHERE s.id = :studentId")
-//    void updateCompletedCredits(@Param("studentId") String studentId, @Param("newCompletedCredits") int newCompletedCredits);
 }
