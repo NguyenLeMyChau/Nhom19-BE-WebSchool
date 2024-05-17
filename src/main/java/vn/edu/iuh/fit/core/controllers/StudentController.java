@@ -5,10 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.iuh.fit.core.dto.GradeInfoDTO;
+import vn.edu.iuh.fit.core.dto.SemesterGradeInfo;
 import vn.edu.iuh.fit.core.dto.StudentClassInfoDTO;
 import vn.edu.iuh.fit.core.models.Class;
 import vn.edu.iuh.fit.core.models.Grade;
 import vn.edu.iuh.fit.core.models.Response;
+import vn.edu.iuh.fit.core.models.Semester;
 import vn.edu.iuh.fit.core.services.StudentServices;
 
 import java.util.List;
@@ -39,6 +41,22 @@ public class StudentController {
         List<GradeInfoDTO> grades = studentServices.getGradesByStudentAndSemester(studentId, semesterId);
         return ResponseEntity.ok(grades);
     }
+
+
+    @GetMapping("/{studentId}/semesters")
+    public ResponseEntity<List<Semester>> getSemestersByStudentId(@PathVariable String studentId) {
+        List<Semester> semesters = studentServices.findSemestersByStudentIdOrderBySemesterIdAsc(studentId);
+        return ResponseEntity.ok().body(semesters);
+    }
+
+    @GetMapping("/{studentId}/semester-average")
+    public ResponseEntity<SemesterGradeInfo> getSemesterAverage(
+            @PathVariable String studentId,
+            @RequestParam int semesterId) {
+        SemesterGradeInfo semesterGradeInfo = studentServices.calculateSemesterAverage(studentId, semesterId);
+        return ResponseEntity.ok(semesterGradeInfo);
+    }
+
 
 }
 

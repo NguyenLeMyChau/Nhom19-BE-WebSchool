@@ -23,31 +23,32 @@ public class Grade {
     private Subject subject;
 
     @Column(nullable = true)
-    private float tk1;
+    private Float tk1;
     @Column(nullable = true)
-    private float tk2;
+    private Float tk2;
     @Column(nullable = true)
-    private float tk3;
+    private Float tk3;
     @Column(nullable = true)
-    private float tk4;
+    private Float tk4;
     @Column(nullable = true)
-    private float tk5;
+    private Float tk5;
     @Column(nullable = true)
-    private float tk6;
+    private Float tk6;
     @Column(nullable = true)
-    private float th1;
+    private Float th1;
     @Column(nullable = true)
-    private float th2;
+    private Float th2;
     @Column(nullable = true)
-    private float th3;
+    private Float th3;
     @Column(nullable = true)
-    private float th4;
+    private Float th4;
     @Column(nullable = true)
-    private float th5;
+    private Float th5;
     @Column(nullable = true)
-    private float gk;
+    private Float gk;
     @Column(nullable = true)
-    private float ck;
+    private Float ck;
+    private Boolean isPassed;
 
 
 }

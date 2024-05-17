@@ -45,6 +45,7 @@ public class Subject {
 
     @OneToMany(mappedBy = "subject")
     private List<Grade> grades;
+    private Boolean ispassed;
 
 
     public Subject() {

@@ -9,22 +9,28 @@ import vn.edu.iuh.fit.core.models.Grade;
 @Getter
 @Setter
 public class GradeInfoDTO {
-    private String nameSemester;
-    private String course;
+//    private String nameSemester;
+//    private String course;
+    private int semesterId;
     private String classId;
     private String nameSubject;
-    private boolean statusSubject;
-    private float tk1;
-    private float tk2;
-    private float tk3;
-    private float tk4;
-    private float tk5;
-    private float tk6;
-    private float th1;
-    private float th2;
-    private float th3;
-    private float th4;
-    private float th5;
-    private float ck;
-    private float gk;
+    private int credit;
+    private Float tk1;
+    private Float tk2;
+    private Float tk3;
+    private Float tk4;
+    private Float tk5;
+    private Float tk6;
+    private Float th1;
+    private Float th2;
+    private Float th3;
+    private Float th4;
+    private Float th5;
+    private Float ck;
+    private Float gk;
+    private Float tbsubject;
+    private Float tbh4;
+    private String letterGrade;
+    private String rank;
+    private Boolean pass;
 }

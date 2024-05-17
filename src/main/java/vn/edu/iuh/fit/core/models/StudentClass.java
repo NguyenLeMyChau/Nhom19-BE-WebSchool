@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import vn.edu.iuh.fit.core.pks.StudentClassPK;
 
 import java.time.LocalDate;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @AllArgsConstructor
+@IdClass(StudentClassPK.class)
 @Table(name = "student_class")
 public class StudentClass {
     @Id
