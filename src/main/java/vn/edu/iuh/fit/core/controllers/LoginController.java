@@ -1,7 +1,10 @@
 package vn.edu.iuh.fit.core.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.edu.iuh.fit.core.dto.StudentInfoDTO;
 import vn.edu.iuh.fit.core.models.Response;
 import vn.edu.iuh.fit.core.models.Student;
 import vn.edu.iuh.fit.core.services.LoginServices;
@@ -17,21 +20,35 @@ public class LoginController {
     private LoginServices loginServices;
 
     @PostMapping("/")
-    public Response login(@RequestBody Map<String, String> loginRequest) {
+    public ResponseEntity<Response> login(@RequestBody Map<String, String> loginRequest) {
         String username = loginRequest.get("username");
         String password = loginRequest.get("password");
         Student student = loginServices.checkLogin(username, password);
 
-        Response response = new Response();
         if(student != null) {
-            response.setStatus(200);
-            response.setMessage("Login successful");
-            response.setObject(student);
+            StudentInfoDTO studentInfoDTO = getStudentInfoDTO(student);
+            Response response = new Response(200, "Đăng nhập thành công", studentInfoDTO);
+            return ResponseEntity.ok(response);
         } else {
-            response.setStatus(400);
-            response.setMessage("Invalid username or password");
-            response.setObject(null);
+            Response response = new Response(404, "Không tìm thấy người dùng", null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return response;
+    }
+
+    private static StudentInfoDTO getStudentInfoDTO(Student student) {
+        StudentInfoDTO studentInfoDTO = new StudentInfoDTO();
+        studentInfoDTO.setId(student.getId());
+        studentInfoDTO.setName(student.getName());
+        studentInfoDTO.setGender(student.isGender());
+        studentInfoDTO.setDateOfBirth(student.getDateOfBirth());
+        studentInfoDTO.setAddress(student.getAddress());
+        studentInfoDTO.setPassword(student.getPassword());
+        studentInfoDTO.setCourse(student.getCourse());
+        studentInfoDTO.setCompletedCredits(student.getCompletedCredits());
+        studentInfoDTO.setMajor(student.getMajor());
+        studentInfoDTO.setMainClass(student.getMainClass());
+        studentInfoDTO.setTotalCredits(student.getTotalCredits());
+        studentInfoDTO.setOwnedCredits(student.getOwnedCredits());
+        return studentInfoDTO;
     }
 }

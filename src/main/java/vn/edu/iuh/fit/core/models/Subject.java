@@ -36,16 +36,11 @@ public class Subject {
     @JoinColumn(name = "major_id")
     private Major major;
 
-    @ManyToOne
-    @JoinColumn(name = "semester_id")
-    private Semester semester;
-
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Class> classes;
 
     @OneToMany(mappedBy = "subject")
     private List<Grade> grades;
-    private Boolean ispassed;
 
 
     public Subject() {

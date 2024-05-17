@@ -12,35 +12,4 @@ import vn.edu.iuh.fit.core.pks.GradePK;
 import java.util.List;
 
 public interface GradeRepository extends JpaRepository<Grade, GradePK> {
-    @Query("SELECT g FROM Grade g " +
-            "JOIN g.student s " +
-            "JOIN g.subject subj " +
-            "JOIN subj.semester sem " +
-            "WHERE s.id = :studentId AND sem.id = :semesterId")
-    List<Grade> findGradesByStudentIdAndSemesterId(@Param("studentId") String studentId, @Param("semesterId") int semesterId);
-
-    @Query("SELECT g FROM Grade g WHERE g.student.id = :studentId")
-    List<Grade> findGradesByStudentId(@Param("studentId") String studentId);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE Grade g SET g.isPassed = :isPassed WHERE g.student.id = :studentId AND g.subject.id = :subjectId")
-    void updateIsPassed(@Param("studentId") String studentId, @Param("subjectId") String subjectId, @Param("isPassed") Boolean isPassed);
-
-
-    @Query("SELECT g FROM Grade g " +
-            "JOIN g.student s " +
-            "JOIN g.subject subj " +
-            "JOIN subj.semester sem " +
-            "WHERE s.id = :studentId AND sem.id <= :semesterId")
-    List<Grade> findGradesByStudentIdAndSemesterIdLessThan(String studentId, int semesterId);
-
-    @Query("SELECT SUM(subj.credits) FROM Grade g " +
-            "JOIN g.student s " +
-            "JOIN g.subject subj " +
-            "JOIN subj.semester sem " +
-            "WHERE s.id = :studentId AND sem.id = :semesterId AND g.isPassed = true")
-    Integer getTotalPassedCreditsByStudentIdAndSemesterId(String studentId, int semesterId);
-
-
 }
