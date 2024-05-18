@@ -56,4 +56,11 @@ public interface ClassRepository extends JpaRepository<Class, String> {
     @Query(value = "SELECT subject_id, is_passed FROM grade WHERE student_id = :studentId AND is_passed = true", nativeQuery = true)
     List<Object[]> findGradesByStudentId(@Param("studentId") String studentId);
 
+    @Query("SELECT c FROM Class c JOIN c.studentClasses sc " +
+            "WHERE c.semester.id = :semesterId AND sc.student.id = :studentId " +
+            "AND c.id NOT IN (SELECT g.subject.id FROM Grade g WHERE g.student.id = :studentId)")
+    List<Class> findClassesNotPresentInGrade(@Param("studentId") String studentId, @Param("semesterId") int semesterId);
+
+
+
 }
