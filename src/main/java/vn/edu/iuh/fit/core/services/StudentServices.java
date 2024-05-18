@@ -25,6 +25,9 @@ public class StudentServices {
     private SubjectRepository subjectRepository;
 
     @Autowired
+    private SemesterRepository semesterRepository;
+
+    @Autowired
     private GradeRepository gradeRepository;
 
     public List<StudentClassInfoDTO> getStudentClassInfo(String studentId) {
@@ -63,23 +66,23 @@ public class StudentServices {
         return studentClassInfoList;
     }
 
-    public List<GradeInfoDTO> getGradesBySemesters(String studentId) {
-        List<GradeInfoDTO> allGradeInfoList = new ArrayList<>();
-
-        // Lấy danh sách học kỳ mà sinh viên đã học
-        List<Semester> semesters = studentRepository.findSemestersByStudentIdOrderBySemesterIdAsc(studentId);
-
-        // Duyệt qua từng học kỳ
-        for (Semester semester : semesters) {
-            // Lấy danh sách điểm của sinh viên trong học kỳ
-            List<GradeInfoDTO> gradeInfoList = getGradesByStudentAndSemester(studentId, semester.getId());
-
-            // Thêm danh sách điểm của học kỳ vào danh sách tổng
-            allGradeInfoList.addAll(gradeInfoList);
-        }
-
-        return allGradeInfoList;
-    }
+//    public List<GradeInfoDTO> getGradesBySemesters(String studentId) {
+//        List<GradeInfoDTO> allGradeInfoList = new ArrayList<>();
+//
+//        // Lấy danh sách học kỳ mà sinh viên đã học
+//        List<Semester> semesters = studentRepository.findSemestersByStudentIdOrderBySemesterIdAsc(studentId);
+//
+//        // Duyệt qua từng học kỳ
+//        for (Semester semester : semesters) {
+//            // Lấy danh sách điểm của sinh viên trong học kỳ
+//            List<GradeInfoDTO> gradeInfoList = getGradesByStudentAndSemester(studentId, semester.getId());
+//
+//            // Thêm danh sách điểm của học kỳ vào danh sách tổng
+//            allGradeInfoList.addAll(gradeInfoList);
+//        }
+//
+//        return allGradeInfoList;
+//    }
 
     public List<GradeInfoDTO> getGradesByStudentAndSemester(String studentId, int semesterId) {
         List<GradeInfoDTO> gradeInfoList = new ArrayList<>();
@@ -91,7 +94,6 @@ public class StudentServices {
         // Ánh xạ thông tin từ Grade sang GradeInfoDTO
         for (Grade grade : grades) {
             GradeInfoDTO gradeInfo = new GradeInfoDTO();
-
             // Đảm bảo rằng thông tin học kỳ được lấy từ thực thể Class
             Class classInfo = grade.getSubject().getClasses().stream()
                     .filter(c -> c.getSemester().getId() == semesterId)
@@ -101,7 +103,7 @@ public class StudentServices {
                 gradeInfo.setSemesterId(classInfo.getSemester().getId());
 //                gradeInfo.set(classInfo.getSemester().getName());
             }
-
+//            gradeInfo.setSemesterId(grade.getSubject().getSemester().getId());
             gradeInfo.setNameSubject(grade.getSubject().getName());
             gradeInfo.setCredit(grade.getSubject().getCredits());
             gradeInfo.setTk1(grade.getTk1());
@@ -122,14 +124,13 @@ public class StudentServices {
                 // Tính điểm trung bình
                 gradeInfo.setTbsubject(calculateAverage(grade));
 
-                if(gradeInfo.getCk() < 3 || gradeInfo.getGk() == 0 || gradeInfo.getTbsubject() < 4) {
+                if (gradeInfo.getCk() < 3 || gradeInfo.getGk() == 0 || gradeInfo.getTbsubject() < 4) {
                     gradeInfo.setPass(false);
                     gradeInfo.setTbsubject(0.0f);
                     gradeRepository.updateIsPassed(studentId, grade.getSubject().getId(), false);
                 } else {
                     gradeInfo.setPass(true);
                     gradeRepository.updateIsPassed(studentId, grade.getSubject().getId(), true);
-                    // studentRepository.updateCompletedCredits(studentId, student.getCompletedCredits() + grade.getSubject().getCredits());
                 }
 
                 gradeInfo.setTbh4(convertToGrade4(gradeInfo.getTbsubject()));
@@ -144,7 +145,7 @@ public class StudentServices {
 
             List<Class> commonClasses = findCommonClasses(studentClasses, subjectClasses);
 
-            // Lấy classId từ lớp học chung đó
+            // Lấy classId từ lớp học chung đós
             if (!commonClasses.isEmpty()) {
                 // Trong trường hợp này, chọn lớp đầu tiên từ danh sách
                 Class selectedClass = commonClasses.get(0);
@@ -157,82 +158,6 @@ public class StudentServices {
 
         return gradeInfoList;
     }
-
-
-
-
-//    public List<GradeInfoDTO> getGradesByStudentAndSemester(String studentId, int semesterId) {
-//        List<GradeInfoDTO> gradeInfoList = new ArrayList<>();
-//
-//        // Lấy danh sách Grade từ repository
-//        List<Grade> grades = gradeRepository.findGradesByStudentIdAndSemesterId(studentId, semesterId);
-//        Student student = studentRepository.findById(studentId).orElse(null);
-//        // Ánh xạ thông tin từ Grade sang GradeInfoDTO
-//        for (Grade grade : grades) {
-//            GradeInfoDTO gradeInfo = new GradeInfoDTO();
-////            gradeInfo.setNameSemester(grade.getSubject().getSemester().getName());
-////            gradeInfo.setCourse(grade.getSubject().getSemester().getCourse());
-//            gradeInfo.setSemesterId(semesterId);
-//            gradeInfo.setNameSubject(grade.getSubject().getName());
-//            gradeInfo.setCredit(grade.getSubject().getCredits());
-//            gradeInfo.setTk1(grade.getTk1());
-//            gradeInfo.setTk2(grade.getTk2());
-//            gradeInfo.setTk3(grade.getTk3());
-//            gradeInfo.setTk4(grade.getTk4());
-//            gradeInfo.setTk5(grade.getTk5());
-//            gradeInfo.setTk6(grade.getTk6());
-//            gradeInfo.setTh1(grade.getTh1());
-//            gradeInfo.setTh2(grade.getTh2());
-//            gradeInfo.setTh3(grade.getTh3());
-//            gradeInfo.setTh4(grade.getTh4());
-//            gradeInfo.setTh5(grade.getTh5());
-//            gradeInfo.setCk(grade.getCk());
-//            gradeInfo.setGk(grade.getGk());
-//
-//            if (grade.getCk() != null) {
-//                // Tính điểm trung bình
-//                gradeInfo.setTbsubject(calculateAverage(grade));
-//
-//                if(gradeInfo.getCk()<3 || gradeInfo.getGk()==0 || gradeInfo.getTbsubject() < 4)
-//                {
-//                    gradeInfo.setPass(false);
-//
-//                    gradeInfo.setTbsubject(0.0f);
-//                    gradeRepository.updateIsPassed(studentId,grade.getSubject().getId(),false);
-//                }
-//                else{
-//                    gradeInfo.setPass(true);
-//                    gradeRepository.updateIsPassed(studentId,grade.getSubject().getId(),true);
-////                    studentRepository.updateCompletedCredits(studentId, student.getCompletedCredits() + grade.getSubject().getCredits());
-//                }
-//
-//                gradeInfo.setTbh4(convertToGrade4(gradeInfo.getTbsubject()));
-//                gradeInfo.setLetterGrade(convertToLetterGrade(gradeInfo.getTbsubject()));
-//                gradeInfo.setRank(getPerformanceRating(gradeInfo.getTbsubject()));
-//
-//            }
-//
-//
-//            // Lấy danh sách các lớp học mà sinh viên tham gia
-//            List<Class> studentClasses = studentRepository.findClassesByStudentId(studentId);
-//            // Lấy danh sách các lớp học của môn học
-//            List<Class> subjectClasses = subjectRepository.findClassesBySubjectId(grade.getSubject().getId());
-//
-//            List<Class> commonClasses = findCommonClasses(studentClasses, subjectClasses);
-//
-//            // Lấy classId từ lớp học chung đós
-//            if (!commonClasses.isEmpty()) {
-//                // Trong trường hợp này, chọn lớp đầu tiên từ danh sách
-//                Class selectedClass = commonClasses.get(0);
-//                // Lấy classId và lưu vào GradeInfoDTO
-//                gradeInfo.setClassId(selectedClass.getId());
-//            }
-//
-//            gradeInfoList.add(gradeInfo);
-//        }
-//
-//        return gradeInfoList;
-//    }
 
     // Phương thức để tìm các lớp học chung từ hai danh sách lớp học
     private List<Class> findCommonClasses(List<Class> list1, List<Class> list2) {
@@ -247,7 +172,6 @@ public class StudentServices {
         }
         return commonClasses;
     }
-
 
     private float calculateAverage(Grade grade) {
         // Lấy các điểm từ đối tượng Grade
@@ -268,7 +192,6 @@ public class StudentServices {
         // Tính điểm trung bình theo tỉ lệ
         float avgGrade = avgTk * 0.2f + (gk != null ? gk * 0.3f : 0) + (ck != null ? ck * 0.5f : 0);
 
-//        return avgGrade;
         DecimalFormat df = new DecimalFormat("#.##");
         return Float.parseFloat(df.format(avgGrade));
     }
@@ -327,8 +250,7 @@ public class StudentServices {
         DecimalFormat df = new DecimalFormat("#.##");
 
         // Lấy danh sách các điểm của sinh viên trong học kỳ
-        List<Grade> grades = gradeRepository.findGradesByStudentIdAndSemesterIdLessThan(studentId, semesterId);
-//        List<Grade> grades = gradeRepository.findGradesByStudentIdAndSemesterId(studentId, semesterId);
+        List<Grade> grades = gradeRepository.findGradesByStudentIdAndSemesterId(studentId, semesterId);
         Student student = studentRepository.findById(studentId).orElse(null);
 
         if (student == null) {
@@ -345,7 +267,7 @@ public class StudentServices {
         int totalCredits = 0;
         int passCredits = 0;
         int owedCredits = 0;
-        int totalAccumulatedCredits = student.getCompletedCredits();
+//        int totalAccumulatedCredits = student.getCompletedCredits();
 
         // Tạo đối tượng SemesterGradeInfo
         SemesterGradeInfo semesterGradeInfo = new SemesterGradeInfo();
@@ -355,18 +277,15 @@ public class StudentServices {
             float averageGrade = calculateAverage(grade);  // Sử dụng phương thức calculateAverage đã có
             if (grade.getCk() < 3 || grade.getGk() == 0 || averageGrade < 4) {
                 averageGrade = 0.0f;
-            } else {
-                totalWeightedGrades10 += averageGrade * credits;
-                totalCredits += credits;
             }
+            totalWeightedGrades10 += averageGrade * credits;
+            totalCredits += credits;
 
-            // Kiểm tra nếu điểm trung bình môn >= 4 (hệ 10), tính là đạt
             if (averageGrade >= 4.0) {
                 passCredits += credits;
             } else {
                 owedCredits += credits;
             }
-
         }
 
         if (totalCredits > 0) {
@@ -379,18 +298,18 @@ public class StudentServices {
             semesterGradeInfo.setTbhk4(0.0f);
         }
 
+        float accumulatedAverage10 = calculateAccumulatedAverage(studentId, semesterId);
 
-        float accumulatedAverage10 = calculateAccumulatedAverage(studentId);
-
-
+        //tỉnh trung bình tích lũy
         semesterGradeInfo.setTbtl10(Float.parseFloat(df.format(accumulatedAverage10)));
         semesterGradeInfo.setTbtl4(convertToGrade4(accumulatedAverage10));
 
-
+        //tổng số tín chỉ đk
         int sumRegisteredCredit = calculateSumRegisteredCredit(grades);
         semesterGradeInfo.setSumRegisteredCredit(sumRegisteredCredit);
 
 
+        //tổng số tín chỉ pass
         Integer totalPassedCredits = gradeRepository.getTotalPassedCreditsByStudentIdAndSemesterId(studentId, semesterId);
         if (totalPassedCredits != null) {
             semesterGradeInfo.setPassCredit(totalPassedCredits.intValue());
@@ -398,15 +317,30 @@ public class StudentServices {
             semesterGradeInfo.setPassCredit(0);
         }
 
-        semesterGradeInfo.setOwedCredit(owedCredits);
-        semesterGradeInfo.setTotalAccumulatedCredits(totalAccumulatedCredits + passCredits);
+        //tích số tín chỉ nợ
 
+        Integer totalOwedCredits = gradeRepository.getTotalOwnCreditsByStudentIdAndSemesterId(studentId, semesterId);
+        if (totalOwedCredits != null) {
+            semesterGradeInfo.setOwedCredit(totalOwedCredits.intValue());
 
+        } else {
+            semesterGradeInfo.setOwedCredit(0);
+        }
+        //tính tổng số tín chỉ tích lũy
+
+        Integer totalAccumulatedCredits = gradeRepository.getTotalAccumulatedCreditsByStudentIdAndSemesterId(studentId, semesterId);
+        if (totalAccumulatedCredits != null) {
+            semesterGradeInfo.setTotalAccumulatedCredits(totalAccumulatedCredits.intValue());
+            student.setCompletedCredits(totalAccumulatedCredits.intValue());
+            studentRepository.save(student);
+
+        } else {
+            semesterGradeInfo.setTotalAccumulatedCredits(0);
+        }
         // Xếp hạng học tập dựa trên điểm trung bình học kỳ hệ 10
         semesterGradeInfo.setRankedAcademic(getPerformanceRating(semesterGradeInfo.getTbhk10()));
         // Xếp hạng kết quả học tập dựa trên điểm trung bình tích lũy hệ 10
         semesterGradeInfo.setRankedAcademicResult(getPerformanceRating(semesterGradeInfo.getTbtl10()));
-
 
         return semesterGradeInfo;
     }
@@ -414,17 +348,16 @@ public class StudentServices {
     private int calculateSumRegisteredCredit(List<Grade> grades) {
         int sumRegisteredCredit = 0;
         for (Grade grade : grades) {
-            if(grade.getGk() != null){
+            if (grade.getGk() != null) {
                 sumRegisteredCredit += grade.getSubject().getCredits();
             }
         }
         return sumRegisteredCredit;
     }
 
-
-
-    private float calculateAccumulatedAverage(String studentId) {
-        List<Grade> allGrades = gradeRepository.findGradesByStudentId(studentId);
+    private float calculateAccumulatedAverage(String studentId, int semesterId) {
+        // Lấy tất cả các điểm của sinh viên từ kỳ 1 đến kỳ hiện tại
+        List<Grade> allGrades = gradeRepository.findGradesByStudentIdAndSemesterIdLessThan(studentId, semesterId);
 
         float totalWeightedGrades = 0;
         int totalCredits = 0;
@@ -436,10 +369,11 @@ public class StudentServices {
                 // Kiểm tra điểm ck có khác null
                 if (grade.getCk() < 3 || grade.getGk() == 0 || averageGrade < 4) {
                     averageGrade = 0.0f;
-                } else {
+                }
+//                else {
                     totalWeightedGrades += averageGrade * credits;
                     totalCredits += credits;
-                }
+//                }
             }
         }
 
@@ -447,11 +381,7 @@ public class StudentServices {
     }
 
 
-
     public List<Semester> findSemestersByStudentIdOrderBySemesterIdAsc(String studentId) {
         return studentRepository.findSemestersByStudentIdOrderBySemesterIdAsc(studentId);
     }
-
-
-
 }

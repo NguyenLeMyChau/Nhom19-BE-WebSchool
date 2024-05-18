@@ -12,22 +12,12 @@ import vn.edu.iuh.fit.core.pks.GradePK;
 import java.util.List;
 
 public interface GradeRepository extends JpaRepository<Grade, GradePK> {
-//    @Query("SELECT g FROM Grade g " +
-//            "JOIN g.student s " +
-//            "JOIN g.subject subj " +
-//            "JOIN subj.classes c " +
-////            "join c.semester sem " +
-//            "WHERE s.id = :studentId AND c.semester.id = :semesterId")
-//    List<Grade> findGradesByStudentIdAndSemesterId(@Param("studentId") String studentId, @Param("semesterId") int semesterId);
-
     @Query("SELECT DISTINCT g FROM Grade g " +
             "JOIN g.subject s " +
             "JOIN s.classes c " +
             "JOIN c.studentClasses sc " +
             "WHERE g.student.id = :studentId AND c.semester.id = :semesterId")
     List<Grade> findGradesByStudentIdAndSemesterId(@Param("studentId") String studentId, @Param("semesterId") int semesterId);
-    @Query("SELECT g FROM Grade g WHERE g.student.id = :studentId")
-    List<Grade> findGradesByStudentId(@Param("studentId") String studentId);
 
     @Transactional
     @Modifying
@@ -39,20 +29,38 @@ public interface GradeRepository extends JpaRepository<Grade, GradePK> {
             "JOIN g.student s " +
             "JOIN g.subject subj " +
             "JOIN subj.classes c " +
-//            "join c.semester sem " +
+            "join c.studentClasses cs " +
             "WHERE s.id = :studentId AND c.semester.id <= :semesterId")
     List<Grade> findGradesByStudentIdAndSemesterIdLessThan(String studentId, int semesterId);
 
-    @Query("SELECT SUM(subj.credits) FROM Grade g " +
-            "JOIN g.student s " +
-            "JOIN g.subject subj " +
-            "JOIN subj.classes c " +
-            "join c.semester sem " +
-            "WHERE s.id = :studentId AND sem.id = :semesterId AND g.isPassed = true")
+
+    @Query("SELECT SUM(s.credits) AS Total " +
+            "FROM Grade g " +
+            "JOIN g.subject s " +
+            "JOIN s.classes c " +
+            "JOIN c.studentClasses sc " +
+            "WHERE g.student.id = :studentId AND c.semester.id = :semesterId AND g.isPassed = true " +
+            "AND g.student.id = sc.student.id AND c.id = sc.classInfo.id")
     Integer getTotalPassedCreditsByStudentIdAndSemesterId(String studentId, int semesterId);
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Grade g SET g.isPassed = :isPassed WHERE g.subject.id = :id")
-    void updateIsPassed(@Param("id") String id, @Param("isPassed") Boolean isPassed);
+    @Query("SELECT SUM(s.credits) AS Total " +
+            "FROM Grade g " +
+            "JOIN g.subject s " +
+            "JOIN s.classes c " +
+            "JOIN c.studentClasses sc " +
+            "WHERE g.student.id = :studentId AND c.semester.id <= :semesterId AND g.isPassed = true " +
+            "AND g.student.id = sc.student.id AND c.id = sc.classInfo.id")
+    Integer getTotalAccumulatedCreditsByStudentIdAndSemesterId(@Param("studentId") String studentId, @Param("semesterId") int semesterId);
+
+
+    @Query("SELECT SUM(s.credits) AS Total " +
+            "FROM Grade g " +
+            "JOIN g.subject s " +
+            "JOIN s.classes c " +
+            "JOIN c.studentClasses sc " +
+            "WHERE g.student.id = :studentId AND c.semester.id <= :semesterId AND g.isPassed = false " +
+            "AND g.student.id = sc.student.id AND c.id = sc.classInfo.id")
+    Integer getTotalOwnCreditsByStudentIdAndSemesterId(String studentId, int semesterId);
+
+
 }

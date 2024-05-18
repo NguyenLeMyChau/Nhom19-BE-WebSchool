@@ -21,8 +21,4 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     @Query("SELECT DISTINCT c.semester FROM StudentClass sc JOIN sc.classInfo c WHERE sc.student.id = :studentId ORDER BY c.semester.id ASC")
     List<Semester> findSemestersByStudentIdOrderBySemesterIdAsc(String studentId);
 
-    @Transactional
-    @Modifying
-    @Query("UPDATE Student s SET s.completedCredits = :completedCredits WHERE s.id = :studentId")
-    void updateCompletedCredits(@Param("studentId") String studentId, @Param("completedCredits") int completedCredits);
 }
