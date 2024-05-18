@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.iuh.fit.core.dto.RegisteredDTO;
 import vn.edu.iuh.fit.core.models.Class;
+import vn.edu.iuh.fit.core.models.Grade;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -52,5 +53,7 @@ public interface ClassRepository extends JpaRepository<Class, String> {
             "WHERE sc.student_id = :studentId AND c.semester_id = :semesterId", nativeQuery = true)
     List<Object[]> findDuplicateSchedules(@Param("studentId") String studentId, @Param("semesterId") int semesterId);
 
+    @Query(value = "SELECT subject_id, is_passed FROM grade WHERE student_id = :studentId AND is_passed = true", nativeQuery = true)
+    List<Object[]> findGradesByStudentId(@Param("studentId") String studentId);
 
 }

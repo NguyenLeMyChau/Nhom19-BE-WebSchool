@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.iuh.fit.core.dto.DuplicateSchedulesDTO;
 import vn.edu.iuh.fit.core.dto.RegisteredDTO;
 import vn.edu.iuh.fit.core.models.Class;
+import vn.edu.iuh.fit.core.models.Grade;
 import vn.edu.iuh.fit.core.models.Semester;
 import vn.edu.iuh.fit.core.repositories.ClassRepository;
 import vn.edu.iuh.fit.core.repositories.MajorRepository;
@@ -71,5 +72,9 @@ public class CourseServices {
             classes.add(new DuplicateSchedulesDTO(classId, name, dayOfWeek, lesson, semester));
         }
         return classes;
+    }
+
+    public List<Object[]> findGradesByStudentId(String studentId) {
+        return classRepository.findGradesByStudentId(studentId);
     }
 }

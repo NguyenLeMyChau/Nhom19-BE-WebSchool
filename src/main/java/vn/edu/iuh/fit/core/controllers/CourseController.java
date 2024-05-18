@@ -3,18 +3,19 @@ package vn.edu.iuh.fit.core.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.iuh.fit.core.dto.ClassDTO;
-import vn.edu.iuh.fit.core.dto.DuplicateSchedulesDTO;
-import vn.edu.iuh.fit.core.dto.RegisteredDTO;
-import vn.edu.iuh.fit.core.dto.SubjectDTO;
+import vn.edu.iuh.fit.core.dto.*;
 import vn.edu.iuh.fit.core.models.Class;
+import vn.edu.iuh.fit.core.models.Grade;
 import vn.edu.iuh.fit.core.models.Response;
 import vn.edu.iuh.fit.core.models.Semester;
 import vn.edu.iuh.fit.core.services.CourseServices;
+import vn.edu.iuh.fit.core.services.EmailService;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -23,6 +24,9 @@ import java.util.Map;
 public class CourseController {
     @Autowired
     private CourseServices courseServices;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/current-semester")
     public ResponseEntity<Semester> getCurrentSemesters() {
@@ -85,9 +89,18 @@ public class CourseController {
     public ResponseEntity<String> enrollStudentToClass(@RequestBody Map<String, String> body) {
         String studentId = body.get("studentId");
         String classId = body.get("classId");
+        String subjectName = body.get("subjectName");
+
+        double totalPrice = Double.parseDouble(body.get("totalPrice"));
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+        String formattedTotalPrice = numberFormat.format(totalPrice);
+
         LocalDate regisDate = LocalDate.now();
+
         boolean result = courseServices.enrollStudentToClass(studentId, classId, regisDate);
         if (result) {
+            String success = "Xin chào sinh viên có MSSV là " + studentId + ", chúng tôi thông báo anh/chị đã đăng ký thành công môn học " + subjectName + " và bây giờ tổng công nợ của anh/chị là " + formattedTotalPrice + " VNĐ";
+            emailService.sendEmail("no1xchau@gmail.com", "IUH - Sucess", success);
             return ResponseEntity.ok("Đăng ký môn học thành công");
         } else {
             return ResponseEntity.status(500).body("Đăng ký môn học thất bại");
@@ -137,4 +150,18 @@ public class CourseController {
         List<DuplicateSchedulesDTO> results = courseServices.findDuplicateSchedules(studentId, semesterId);
         return ResponseEntity.ok(results);
     }
+
+    @GetMapping("/{studentId}/grades")
+    public ResponseEntity<List<GradeCourseDTO>> getGradesByStudentId(@PathVariable String studentId) {
+        List<Object[]> results = courseServices.findGradesByStudentId(studentId);
+        List<GradeCourseDTO> grades = new ArrayList<>();
+        for (Object[] result : results) {
+            String subjectId = (String) result[0];
+            Boolean isPassed = (Boolean) result[1];
+            grades.add(new GradeCourseDTO(subjectId, isPassed));
+        }
+        return ResponseEntity.ok(grades);
+    }
+
+
 }
