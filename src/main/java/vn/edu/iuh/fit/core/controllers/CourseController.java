@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.iuh.fit.core.dto.ClassDTO;
+import vn.edu.iuh.fit.core.dto.DuplicateSchedulesDTO;
 import vn.edu.iuh.fit.core.dto.RegisteredDTO;
 import vn.edu.iuh.fit.core.dto.SubjectDTO;
 import vn.edu.iuh.fit.core.models.Class;
@@ -94,8 +95,8 @@ public class CourseController {
     }
 
     @GetMapping("/{studentId}/classes")
-    public ResponseEntity<List<RegisteredDTO>> getStudentClasses(@PathVariable String studentId) {
-        List<Object[]> results = courseServices.findStudentClasses(studentId);
+    public ResponseEntity<List<RegisteredDTO>> getStudentClasses(@PathVariable String studentId, @RequestParam int semesterId) {
+        List<Object[]> results = courseServices.findStudentClasses(studentId, semesterId);
         List<RegisteredDTO> classes = new ArrayList<>();
         for (Object[] result : results) {
             RegisteredDTO classDTO = new RegisteredDTO();
@@ -103,10 +104,16 @@ public class CourseController {
             classDTO.setName((String) result[1]);
             classDTO.setCredits((Integer) result[2]);
             classDTO.setTotal((Double) result[3]);
+
             java.sql.Date sqlDate = (java.sql.Date) result[4];
             LocalDate localDate = sqlDate.toLocalDate();
             classDTO.setRegisDate(localDate);
-            Long longValue = (Long) result[5];
+
+            classDTO.setLesson((String) result[5]);
+            classDTO.setDayOfWeek((String) result[6]);
+            classDTO.setClassroom((String) result[7]);
+
+            Long longValue = (Long) result[8];
             Boolean booleanValue = longValue != 0;
             classDTO.setStatus(booleanValue);
             classes.add(classDTO);
@@ -123,5 +130,11 @@ public class CourseController {
         } else {
             return ResponseEntity.status(500).body("Hủy đăng ký môn học thất bại");
         }
+    }
+
+    @GetMapping("/{studentId}/duplicate-schedules")
+    public ResponseEntity<List<DuplicateSchedulesDTO>> findDuplicateSchedules(@PathVariable String studentId, @RequestParam int semesterId) {
+        List<DuplicateSchedulesDTO> results = courseServices.findDuplicateSchedules(studentId, semesterId);
+        return ResponseEntity.ok(results);
     }
 }

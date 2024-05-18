@@ -25,12 +25,7 @@ public interface ClassRepository extends JpaRepository<Class, String> {
     @Query(value = "SELECT COUNT(*) FROM student_class WHERE class_id = :classId", nativeQuery = true)
     int countStudentsInClass(@Param("classId") String classId);
 
-    @Query(value = "SELECT \n" +
-            "    c.class_id, \n" +
-            "    s.name, \n" +
-            "    s.credits, \n" +
-            "    s.tuition * s.credits AS total, \n" +
-            "    sl.regis_date,\n" +
+    @Query(value = "SELECT c.class_id, s.name, s.credits, s.tuition * s.credits AS total, sl.regis_date,c.lesson,c.day_of_week,c.classroom,\n" +
             "    CASE \n" +
             "        WHEN CURRENT_DATE BETWEEN c.start_date AND c.end_date THEN 1 \n" +
             "        ELSE 0 \n" +
@@ -42,29 +37,20 @@ public interface ClassRepository extends JpaRepository<Class, String> {
             "JOIN \n" +
             "    subject s ON c.subject_id = s.subject_id \n" +
             "WHERE \n" +
-            "    sl.student_id = :studentId \n" +
-            "    AND c.semester_id = (\n" +
-            "        SELECT \n" +
-            "            semester_id\n" +
-            "        FROM \n" +
-            "            semester\n" +
-            "        WHERE \n" +
-            "            (\n" +
-            "                (MONTH(CURRENT_DATE()) >= 5 AND SUBSTRING(course, 1, 4) = YEAR(CURRENT_DATE()))\n" +
-            "                OR (MONTH(CURRENT_DATE()) < 5 AND SUBSTRING(course, 6, 9) = YEAR(CURRENT_DATE()))\n" +
-            "            )\n" +
-            "            AND (\n" +
-            "                (MONTH(CURRENT_DATE()) >= 5 AND NAME = 'HK1')\n" +
-            "                OR (MONTH(CURRENT_DATE()) < 5 AND NAME = 'HK2')\n" +
-            "            )\n" +
-            "    );", nativeQuery = true)
-    List<Object[]> findStudentClasses(@Param("studentId") String studentId);
+            "    sl.student_id = :studentId\n" +
+            "    AND c.semester_id = :semesterId", nativeQuery = true)
+    List<Object[]> findStudentClasses(@Param("studentId") String studentId, @Param("semesterId") int semesterId);
 
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM student_class WHERE class_id = :classId AND student_id = :studentId", nativeQuery = true)
     int deleteStudentFromClass(@Param("classId") String classId, @Param("studentId") String studentId);
 
+    @Query(value = "SELECT c.class_id, c.name, c.day_of_week, c.lesson, c.semester_id " +
+            "FROM student_class sc " +
+            "JOIN class c ON c.class_id = sc.class_id " +
+            "WHERE sc.student_id = :studentId AND c.semester_id = :semesterId", nativeQuery = true)
+    List<Object[]> findDuplicateSchedules(@Param("studentId") String studentId, @Param("semesterId") int semesterId);
 
 
 }
