@@ -126,7 +126,7 @@ public class CourseController {
             classDTO.setDayOfWeek((String) result[6]);
             classDTO.setClassroom((String) result[7]);
 
-            Long longValue = (Long) result[8];
+            Integer longValue = (Integer) result[8];
             Boolean booleanValue = longValue != 0;
             classDTO.setStatus(booleanValue);
             classes.add(classDTO);
