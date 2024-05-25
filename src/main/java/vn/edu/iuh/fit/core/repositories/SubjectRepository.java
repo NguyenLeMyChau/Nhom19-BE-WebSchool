@@ -15,4 +15,8 @@ public interface SubjectRepository extends JpaRepository<Subject, String> {
     @Query("SELECT c FROM Class c WHERE c.subject.id = :subjectId")
     List<Class> findClassesBySubjectId(@Param("subjectId") String subjectId);
 
+    @Query("SELECT s FROM Subject s WHERE s.id NOT IN " +
+            "(SELECT g.subject.id FROM Grade g join Student s join StudentClass sc join Class c WHERE g.student.id = :studentId AND c.semester.id = :semesterId)")
+    List<Subject> findSubjectsWithoutGrades(@Param("studentId") String studentId, @Param("semesterId") int semesterId);
+
 }

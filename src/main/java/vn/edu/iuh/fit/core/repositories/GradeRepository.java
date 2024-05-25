@@ -19,6 +19,9 @@ public interface GradeRepository extends JpaRepository<Grade, GradePK> {
             "WHERE g.student.id = :studentId AND c.semester.id = :semesterId")
     List<Grade> findGradesByStudentIdAndSemesterId(@Param("studentId") String studentId, @Param("semesterId") int semesterId);
 
+
+
+
     @Transactional
     @Modifying
     @Query("UPDATE Grade g SET g.isPassed = :isPassed WHERE g.student.id = :studentId AND g.subject.id = :subjectId")
