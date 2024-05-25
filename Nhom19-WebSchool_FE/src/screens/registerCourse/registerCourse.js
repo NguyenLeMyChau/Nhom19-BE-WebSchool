@@ -220,7 +220,8 @@ function RegisterCourse() {
             studentId: studentId,
             classId: classId,
             subjectName: selectedClass.subjectName,
-            totalPrice: totalPrice + selectedClass.total
+            totalPrice: totalPrice + selectedClass.total,
+            email: student.email
           });
 
           alert(response.data);

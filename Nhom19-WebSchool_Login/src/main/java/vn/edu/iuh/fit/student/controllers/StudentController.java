@@ -49,7 +49,7 @@ public class StudentController {
         studentInfoDTO.setMajor(student.getMajor());
         studentInfoDTO.setMainClass(student.getMainClass());
         studentInfoDTO.setTotalCredits(student.getTotalCredits());
-        studentInfoDTO.setOwnedCredits(student.getOwnedCredits());
+        studentInfoDTO.setEmail(student.getEmail());
         return studentInfoDTO;
     }
 }

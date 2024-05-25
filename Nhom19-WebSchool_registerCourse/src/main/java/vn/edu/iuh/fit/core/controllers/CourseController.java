@@ -92,6 +92,7 @@ public class CourseController {
         String studentId = body.get("studentId");
         String classId = body.get("classId");
         String subjectName = body.get("subjectName");
+        String email = body.get("email");
 
         double totalPrice = Double.parseDouble(body.get("totalPrice"));
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
@@ -109,7 +110,7 @@ public class CourseController {
 
             MessageProducer producer = session.createProducer(destination);
 
-            String success = "Xin chào sinh viên có MSSV là " + studentId + ", chúng tôi thông báo anh/chị đã đăng ký thành công môn học " + subjectName + " và bây giờ tổng công nợ của anh/chị là " + formattedTotalPrice + " VNĐ";
+            String success = "Xin chào sinh viên có MSSV là " + studentId + ", chúng tôi thông báo anh/chị đã đăng ký thành công môn học " + subjectName + " và bây giờ tổng công nợ của anh/chị là " + formattedTotalPrice + " VNĐ " + email;
 
             TextMessage textMsg = session.createTextMessage(success);
             producer.send(textMsg);

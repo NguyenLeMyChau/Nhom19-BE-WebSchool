@@ -29,13 +29,14 @@ function OldStudent() {
                 const response = await axios.post(url, {
                     id: student.id,
                     name: student.name,
-                    gender: student.gender ? 'Nam' : 'Nữ',
+                    gender: student.gender ? 'Nữ' : 'Nam',
                     dateOfBirth: student.dateOfBirth,
                     major: student.major.name,
                     completedCredits: student.completedCredits,
                 });
                 alert('Đăng ký thành công.');
-                // Đặt các hành động tiếp theo tại đây, ví dụ: chuyển hướng người dùng hoặc làm mới form
+                navigate('/home');
+
             } catch (error) {
                 // Xử lý lỗi khi gửi request
                 console.error('Lỗi khi gửi request:', error);

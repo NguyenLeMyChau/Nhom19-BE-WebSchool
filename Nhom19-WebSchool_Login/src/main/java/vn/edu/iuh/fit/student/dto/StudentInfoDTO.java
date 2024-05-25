@@ -20,7 +20,7 @@ public class StudentInfoDTO {
     private Major major;
     private String mainClass;
     private int totalCredits;
-    private int ownedCredits;
+    private String email;
 
     public StudentInfoDTO() {
     }

@@ -19,7 +19,17 @@ public class EmailController {
         if(message instanceof TextMessage) {
             //1. read message data
             String msg = ((TextMessage) message).getText();
-            emailService.sendEmail("no1xchau@gmail.com", "IUH - Success", msg);
+            System.out.println("MSG: " + msg);
+
+            String[] parts = msg.split(" ");
+            String email = parts[parts.length - 1];
+            System.out.println("EmailController: " + email);
+
+            int emailPosition = msg.lastIndexOf(email);
+            String msgWithoutEmail = msg.substring(0, emailPosition).trim();
+            System.out.println("Message without email: " + msgWithoutEmail);
+
+            emailService.sendEmail(email, "IUH - Success", msgWithoutEmail);
         }
     }
 }

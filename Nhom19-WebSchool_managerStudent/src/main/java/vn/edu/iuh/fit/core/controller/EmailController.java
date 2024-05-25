@@ -19,7 +19,7 @@ public class EmailController {
         if(message instanceof TextMessage) {
             //1. read message data
             String msg = ((TextMessage) message).getText();
-            emailService.sendEmail("hieu92145@gmail.com", "IUH - Success", msg);
+            emailService.sendEmail("hieu92145@gmail.com", "IUH - register graduation", msg);
         }
     }
 }

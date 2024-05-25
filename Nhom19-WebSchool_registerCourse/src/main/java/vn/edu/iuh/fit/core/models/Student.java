@@ -40,7 +40,7 @@ public class Student {
     @OneToMany(mappedBy = "student")
     private List<StudentClass> studentClasses = new ArrayList<>();
     private int totalCredits;
-
+    private String email;
 //
 //    @ManyToMany
 //    @JoinTable(

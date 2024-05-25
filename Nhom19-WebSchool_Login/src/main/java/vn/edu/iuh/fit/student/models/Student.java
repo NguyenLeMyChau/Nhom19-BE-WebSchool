@@ -42,6 +42,8 @@ public class Student {
 
     private int totalCredits;
 
+    private String email;
+
 //
 //    @ManyToMany
 //    @JoinTable(
