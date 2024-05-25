@@ -40,7 +40,6 @@ public class Student {
     @OneToMany(mappedBy = "student")
     private List<StudentClass> studentClasses = new ArrayList<>();
 
-    private int ownedCredits;
 
     private int totalCredits;
 

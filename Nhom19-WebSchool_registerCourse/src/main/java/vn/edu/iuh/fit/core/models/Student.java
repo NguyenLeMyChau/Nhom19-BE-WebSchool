@@ -35,14 +35,10 @@ public class Student {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_id")
     private Major major;
-
     private String mainClass;
 
     @OneToMany(mappedBy = "student")
     private List<StudentClass> studentClasses = new ArrayList<>();
-
-    private int ownedCredits;
-
     private int totalCredits;
 
 //
