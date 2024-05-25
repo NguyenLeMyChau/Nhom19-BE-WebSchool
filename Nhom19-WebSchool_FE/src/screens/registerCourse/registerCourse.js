@@ -17,6 +17,7 @@ function RegisterCourse() {
   const [classId, setClassId] = useState('');
   const [totalCredits, setTotalCredits] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [student, setStudent] = useState([]);
 
   const [selectedRadioSubject, setSelectedRadioSubject] = useState('');
   const [selectRadioClass, setSelectRadioClass] = useState('')
@@ -43,8 +44,48 @@ function RegisterCourse() {
     }
   }
 
-  const handleRadioChange = (event) => { // new handler for radio buttons
+  const radioOptions = [
+    { label: 'HỌC MỚI', value: 'HỌC MỚI' },
+    { label: 'HỌC LẠI', value: 'HỌC LẠI' },
+    { label: 'HỌC CẢI THIỆN', value: 'HỌC CẢI THIỆN' }
+  ];
+
+  const handleRadioChange = async (event) => { // new handler for radio buttons
     setSelectedRadio(event.target.value);
+    if (event.target.value === 'HỌC LẠI') {
+      //Lấy thông tin môn học học lại
+      const major = student.major.id;
+      console.log('.........studentId', studentId);
+      const subjectsUrl = `http://localhost:8083/course/${studentId}/subjects/again?major=${major}`;
+      const response = await axios.get(subjectsUrl);
+      const dataWithId = response.data.map((item, index) => ({
+        id: index + 1,
+        ...item
+      }));
+      setTableData(dataWithId);
+    } else if (event.target.value === 'HỌC MỚI') {
+      //Lấy thông tin môn học mới
+      const major = student.major.id;
+      console.log('.........studentId', studentId);
+      const subjectsUrl = `http://localhost:8083/course/${studentId}/subjects?major=${major}`;
+      const response = await axios.get(subjectsUrl);
+      const dataWithId = response.data.map((item, index) => ({
+        id: index + 1,
+        ...item
+      }));
+      setTableData(dataWithId);
+    } else {
+      //Lấy thông tin môn học cải thiện
+      const major = student.major.id;
+      console.log('.........studentId', studentId);
+      const subjectsUrl = `http://localhost:8083/course/${studentId}/subjects/improve?major=${major}`;
+      const response = await axios.get(subjectsUrl);
+      const dataWithId = response.data.map((item, index) => ({
+        id: index + 1,
+        ...item
+      }));
+      setTableData(dataWithId);
+    }
   }
 
   const handleRadioSubject = async (event) => { // new handler for radio buttons
@@ -77,7 +118,8 @@ function RegisterCourse() {
         parent: selectedItem.parentId,
         subjectName: selectedItem.name,
         credits: selectedItem.credits,
-        total: selectedItem.tuition * selectedItem.credits
+        total: selectedItem.tuition * selectedItem.credits,
+        subjectId: selectedItem.subjectId
       };
     }));
     console.log('Data with id:', dataWithId);
@@ -149,19 +191,42 @@ function RegisterCourse() {
 
       const confirmation = window.confirm("Bạn xác nhận đăng ký môn học này?");
       if (confirmation) {
+        console.log('...........LOADING')
+        if (selectedRadio === 'HỌC LẠI') {
+          console.log('......studentId', studentId)
+          console.log('......subjectId', selectedClass.subjectId)
+          const urlDeleteGrade = `http://localhost:8083/course/delete-grade?studentId=${studentId}&subjectId=${selectedClass.subjectId}`;
+          await axios.delete(urlDeleteGrade);
 
-        const url = 'http://localhost:8083/course/enroll';
+          const urlDeleteClassStudent = `http://localhost:8083/course/delete-class-student?studentId=${studentId}&subjectId=${selectedClass.subjectId}`;
+          await axios.delete(urlDeleteClassStudent);
 
-        const response = await axios.post(url, {
-          studentId: studentId,
-          classId: classId,
-          subjectName: selectedClass.subjectName,
-          totalPrice: totalPrice + selectedClass.total
-        });
+          const url = 'http://localhost:8083/course/enroll';
 
-        alert(response.data);
+          const response = await axios.post(url, {
+            studentId: studentId,
+            classId: classId,
+            subjectName: selectedClass.subjectName,
+            totalPrice: totalPrice + selectedClass.total
+          });
 
-        window.location.reload();
+          alert(response.data);
+
+          window.location.reload();
+        } else {
+          const url = 'http://localhost:8083/course/enroll';
+
+          const response = await axios.post(url, {
+            studentId: studentId,
+            classId: classId,
+            subjectName: selectedClass.subjectName,
+            totalPrice: totalPrice + selectedClass.total
+          });
+
+          alert(response.data);
+
+          window.location.reload();
+        }
 
         // await handleClassResigter(studentId, currentSemester);
 
@@ -207,11 +272,6 @@ function RegisterCourse() {
     }
   };
 
-  const radioOptions = [
-    { label: 'HỌC MỚI', value: 'HỌC MỚI' },
-    { label: 'HỌC LẠI', value: 'HỌC LẠI' },
-    { label: 'HỌC CẢI THIỆN', value: 'HỌC CẢI THIỆN' }
-  ];
 
   useEffect(() => {
     const storedStudent = localStorage.getItem('student');
@@ -219,6 +279,7 @@ function RegisterCourse() {
       const parsedStudent = JSON.parse(storedStudent);
       console.log('Parsed student:', parsedStudent);
       setStudentId(parsedStudent.id);
+      setStudent(parsedStudent);
 
       const fetchData = async () => {
         try {

@@ -27,6 +27,13 @@ function Home() {
         }
     };
 
+    const navigateToOldStudent = () => {
+        if (student && student.id) {
+            window.location.href = '/OldStudent';
+        }
+    };
+
+
     // Tổng số
     const total = student ? student.totalCredits : 0;
     // Số đạt được
@@ -111,20 +118,6 @@ function Home() {
                             <p style={{ fontSize: 42, lineHeight: 1, marginTop: -3 }}>4</p>
                             <p style={{ fontSize: 14, lineHeight: 1, marginTop: -3 }}>Xem chi tiết</p>
                         </button>
-                        {/* <button
-                            className='home-schedule-calendar-text'
-                            style={{
-                                backgroundColor: '#e0fbff',
-                                color: '#4da1e8',
-                                // border: 'none',
-                                // padding: 0, // Thêm padding: 0 để loại bỏ khoảng cách mặc định của button
-                                cursor: 'pointer' // Đảm bảo con trỏ dạng tay khi rê chuột vào toàn bộ button
-                            }}
-                        >
-                            <p style={{ cursor: 'pointer', margin: 0 }} onClick={navigateToSchedule}>Lịch học trong tuần</p>
-                            <p style={{ fontSize: 42, lineHeight: 1, margin: 0 }}>4</p>
-                            <p style={{ fontSize: 14, lineHeight: 1, margin: 0 }}>Xem chi tiết</p>
-                        </button> */}
 
 
                         <div className='home-schedule-calendar-text' style={{ backgroundColor: '#fff2d4', color: '#ff9205' }}>
@@ -154,10 +147,12 @@ function Home() {
 
                 <div className='col-sm-2 home-option-form'>
                     <p style={{ cursor: 'pointer' }}>Tra cứu công nợ</p>
+
                 </div>
 
-                <div className='col-sm-2 home-option-form' style={{ marginRight: 0 }}>
-                    <p style={{ cursor: 'pointer' }}>Nhắc nhở</p>
+                <div onClick={navigateToOldStudent} className='col-sm-2 home-option-form' style={{ marginRight: 0 }}>
+                    <p style={{ cursor: 'pointer' }}>Xét tốt nghiệp</p>
+                    {/* <Link to="/oldStudent">Thông tin sinh viên cũ</Link> */}
                 </div>
 
             </div>

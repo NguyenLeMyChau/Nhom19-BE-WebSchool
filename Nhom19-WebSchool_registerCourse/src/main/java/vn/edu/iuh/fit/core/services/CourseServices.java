@@ -77,4 +77,22 @@ public class CourseServices {
     public List<Object[]> findGradesByStudentId(String studentId) {
         return classRepository.findGradesByStudentId(studentId);
     }
+
+    public List<Object[]> findSubjectsForStudent(Integer major, String student) {
+        return majorRepository.findSubjectsForStudent(major, student);
+    }
+
+    public List<Object[]> findSubjectImprove(Integer major, String student) {
+        return majorRepository.findSubjectImprove(major, student);
+    }
+
+    public boolean deleteGradeByStudentIdAndSubjectId(String studentId, String subjectId) {
+        int rowsAffected = majorRepository.deleteGradeByStudentIdAndSubjectId(studentId, subjectId);
+        return rowsAffected > 0;
+    }
+
+    public boolean deleteStudentFromClassBySubjectId(String studentId, String subjectId) {
+        int rowsAffected = majorRepository.deleteStudentFromClassBySubjectId(studentId, subjectId);
+        return rowsAffected > 0;
+    }
 }
