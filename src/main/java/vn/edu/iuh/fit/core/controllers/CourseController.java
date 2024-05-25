@@ -177,5 +177,60 @@ public class CourseController {
         return ResponseEntity.ok(grades);
     }
 
+    @GetMapping("/{studentId}/subjects/again")
+    public List<SubjectDTO> findSubjectsForStudent(
+            @PathVariable String studentId,
+            @RequestParam Integer major) {
+        List<Object[]> results = courseServices.findSubjectsForStudent(major, studentId);
+        List<SubjectDTO> subjects = new ArrayList<>();
+        for (Object[] result : results) {
+            String subjectId = (String) result[0];
+            Integer credits = (Integer) result[1];
+            String name = (String) result[2];
+            Boolean status = (Boolean) result[3];
+            Double tuition = (Double) result[4];
+            String parentId = (String) result[5];
+            subjects.add(new SubjectDTO(subjectId, credits, name, status, tuition, parentId));
+        }
+        return subjects;
+    }
+
+    @GetMapping("/{studentId}/subjects/improve")
+    public List<SubjectDTO> findSubjectImprove(
+            @PathVariable String studentId,
+            @RequestParam Integer major) {
+        List<Object[]> results = courseServices.findSubjectImprove(major, studentId);
+        List<SubjectDTO> subjects = new ArrayList<>();
+        for (Object[] result : results) {
+            String subjectId = (String) result[0];
+            Integer credits = (Integer) result[1];
+            String name = (String) result[2];
+            Boolean status = (Boolean) result[3];
+            Double tuition = (Double) result[4];
+            String parentId = (String) result[5];
+            subjects.add(new SubjectDTO(subjectId, credits, name, status, tuition, parentId));
+        }
+        return subjects;
+    }
+
+    @DeleteMapping("/delete-grade")
+    public ResponseEntity<String> deleteGradeByStudentIdAndSubjectId(@RequestParam("studentId") String studentId, @RequestParam("subjectId") String subjectId) {
+        boolean result = courseServices.deleteGradeByStudentIdAndSubjectId(studentId, subjectId);
+        if (result) {
+            return ResponseEntity.ok("OK");
+        } else {
+            return ResponseEntity.status(500).body("Not OK");
+        }
+    }
+
+    @DeleteMapping("/delete-class-student")
+    public ResponseEntity<String> deleteStudentFromClassBySubjectId(@RequestParam("studentId") String studentId, @RequestParam("subjectId") String subjectId) {
+        boolean result = courseServices.deleteStudentFromClassBySubjectId(studentId, subjectId);
+        if (result) {
+            return ResponseEntity.ok("OK");
+        } else {
+            return ResponseEntity.status(500).body("Not OK");
+        }
+    }
 
 }
