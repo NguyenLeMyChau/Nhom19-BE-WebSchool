@@ -10,6 +10,9 @@ import vn.edu.iuh.fit.core.models.Response;
 import vn.edu.iuh.fit.core.models.Semester;
 import vn.edu.iuh.fit.core.services.CourseServices;
 import vn.edu.iuh.fit.core.services.EmailService;
+import jakarta.jms.*;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import vn.edu.iuh.fit.core.utils.Constants;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -86,7 +89,7 @@ public class CourseController {
     }
 
     @PostMapping("/enroll")
-    public ResponseEntity<String> enrollStudentToClass(@RequestBody Map<String, String> body) {
+    public ResponseEntity<String> enrollStudentToClass(@RequestBody Map<String, String> body) throws JMSException {
         String studentId = body.get("studentId");
         String classId = body.get("classId");
         String subjectName = body.get("subjectName");
@@ -99,8 +102,19 @@ public class CourseController {
 
         boolean result = courseServices.enrollStudentToClass(studentId, classId, regisDate);
         if (result) {
+            ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory();
+            Connection connection = factory.createConnection();
+            connection.start();
+            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            Destination destination = session.createQueue(Constants.REGISTER_COURSE);
+
+            MessageProducer producer = session.createProducer(destination);
+
             String success = "Xin chào sinh viên có MSSV là " + studentId + ", chúng tôi thông báo anh/chị đã đăng ký thành công môn học " + subjectName + " và bây giờ tổng công nợ của anh/chị là " + formattedTotalPrice + " VNĐ";
-            emailService.sendEmail("no1xchau@gmail.com", "IUH - Sucess", success);
+
+            TextMessage textMsg = session.createTextMessage(success);
+            producer.send(textMsg);
+
             return ResponseEntity.ok("Đăng ký môn học thành công");
         } else {
             return ResponseEntity.status(500).body("Đăng ký môn học thất bại");
